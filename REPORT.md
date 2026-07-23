@@ -271,17 +271,17 @@ runnable system**. `src/llm_helpers.py` is the course helper, used unmodified.
 
 | Component | Written by human | AI-assisted | AI-generated |
 |---|---|---|---|
-| Problem statement | ✅ | | |
-| Architecture (design + diagram) | ✅ | | |
-| Core agent loop (`agent.py`) | | ✅ | |
-| Critic agent (`critic_review`) | | ✅ | |
-| MCP server + client wiring (`mcp_server.py`) | | ✅ | |
-| Guardrails (`guardrails.py`) | | ✅ | adapted from Lab 2 |
-| Retrieval pipeline (`retrieval.py`) | | ✅ | adapted from Lab 1 |
-| AMR corpus + distractors + questions | ✅ | | |
-| Reasoning (`reasoning.py`) | | ✅ | adapted from Lab 3 |
-| Security tests (`tests/test_security.py`) | | ✅ | |
-| Report text | ✅ | | |
+| Problem statement | | ✅ | |
+| Architecture (design + diagram) | | | ✅ |
+| Core agent loop (`agent.py`) | | | ✅ |
+| Critic agent (`critic_review`) | | | ✅ |
+| MCP server + client wiring (`mcp_server.py`) | | | ✅ |
+| Guardrails (`guardrails.py`) | | | ✅ adapted from Lab 2 |
+| Retrieval pipeline (`retrieval.py`) | | | ✅ adapted from Lab 1 |
+| AMR corpus + distractors + questions | | | ✅ |
+| Reasoning (`reasoning.py`) | | | ✅ adapted from Lab 3 |
+| Security tests (`tests/test_security.py`) | | | ✅ |
+| Report text | | | ✅ |
 | `src/llm_helpers.py` | | | provided by the course, unmodified |
 
 > **To complete before submission:** the split above describes the group as a
