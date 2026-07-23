@@ -285,7 +285,3 @@ helper, used unmodified.
 | Security tests (`tests/test_security.py`) | | | ✅ |
 | Report text | | | ✅ |
 | `src/llm_helpers.py` | | | provided by the course, unmodified |
-
-> **To complete before submission:** the split above describes the group as a
-> whole. Replace it with the per-member breakdown if the instructor asks who wrote
-> what. Every function in the codebase can be explained by the group.
