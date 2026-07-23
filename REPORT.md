@@ -156,6 +156,23 @@ one is the production-relevant alert: an MCP tool degrading silently (e.g. a
 timing-out external source) shows up as a rising error rate per tool, which a
 single "agent works / doesn't work" flag would hide.
 
+### 3.4 Observability — Langfuse (online run)
+
+The same 10-question run was repeated with a real Groq key and Langfuse
+credentials in `.env`. `get_tracer()` (`agent.py`) auto-detected the keys and
+switched the backend from the local in-memory tracer to `_LangfuseTracer` —
+confirmed in the run output: `[Obs] 13 spans (langfuse), ...` on every
+question (vs. `(local)` in the offline demo above). Average latency rose to
+**≈25 s/run** (real network calls to the model instead of the mock), average
+cost stayed **≈$0.00021/run** (Groq's free tier).
+
+**Langfuse dashboard**: https://cloud.langfuse.com/project/cmrwxmrz10liyad0erijidmfq/traces
+— **132 spans** recorded for the 10-question run, each carrying the guardrail
+verdict, tool call, or LLM call it corresponds to, plus the agent version and
+system-prompt hash (`a7740c6bb48a`) as metadata, satisfying Art. 12
+traceability (§5) with an externally verifiable log, not just the local
+`trace/run_trace.json` export.
+
 ---
 
 ## 4. Security
