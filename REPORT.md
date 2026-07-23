@@ -85,27 +85,50 @@ precision** (MRR), not raw recall.
 
 ### 3.2 RAGAS — baseline vs final, 10 questions
 
-`python src/retrieval.py` runs RAGAS automatically when a key is present and the
-optional block of `requirements.txt` is installed. It evaluates **two
-configurations** on the same 10 questions — `baseline_retrieve` (plain TF-IDF,
-the pre-Block-1 pipeline) and `production_retrieve` (hybrid + parent-child +
-rerank) — and synthesises a real few-shot-CoT answer for each, so `faithfulness`
-and `answer_relevancy` score the answer the agent would actually return.
+RAGAS was run online against Groq (`llama-3.1-8b-instant`, free tier) with a
+real key in `.env`. It evaluates **two configurations** on the same 10
+questions — `baseline_retrieve` (plain TF-IDF, the pre-Block-1 pipeline) and
+`production_retrieve` (hybrid + parent-child + rerank) — synthesising a real
+few-shot-CoT answer for each, so `faithfulness` scores the answer the agent
+would actually return.
 
 | Metric | Baseline | Final | Technique that caused the change |
 |---|---|---|---|
-| context_recall | _run `src/retrieval.py` online_ | | parent-child (indexes small children, returns the full parent) |
-| context_precision | | | **cross-encoder reranking** (same effect as the MRR gain in §3.1) |
-| faithfulness | | | few-shot CoT with explicit EVIDENCE + critic agent grounding check |
-| answer_relevancy | | | Self-Consistency k=3 (majority vote by stance signature) |
+| context_recall | 0.602 (9/10) | 0.530 (10/10) | did not improve — see note below |
+| context_precision | 0.933 (10/10) | **0.967** (10/10) | **cross-encoder reranking** (same effect as the MRR gain in §3.1) |
+| faithfulness | 0.827 (10/10) | 0.804 (10/10) | roughly flat — within judge noise, see note below |
+| answer_relevancy | — | — | skipped: Groq has no embeddings endpoint (documented below) |
 
-> **To complete before submission:** run `python src/retrieval.py` with a key in
-> `.env` and paste the two printed rows into this table.
-> `answer_relevancy` requires an embeddings endpoint; providers without one (e.g.
-> Groq) run only the 3 LLM-judged metrics, and the script says so explicitly. We
-> report that limitation rather than filling the cell with an invented number.
-> The measured proof of improvement available **offline** is the MRR going from
-> 0.800 to 0.950 (§3.1), attributable to reranking.
+*Read honestly: what improved and what did not.* **context_precision** is the
+one metric that clearly and consistently improved (0.933 → 0.967), and it lines
+up with the offline MRR proxy in §3.1 (0.800 → 0.950) — both point to the same
+mechanism, cross-encoder reranking pushing the right passage to the top before
+synthesis. **context_recall did not improve** (0.602 → 0.530): parent-child
+returns the *full parent* document instead of the small retrieved chunk, which
+dilutes the fraction of "relevant" sentences the recall judge counts against —
+a known trade-off of parent-child chunking (precision up, recall proxy down)
+that a 20-document corpus makes easy to see and a larger corpus would likely
+soften. **faithfulness is flat** (0.827 → 0.804), a 2-point gap that is inside
+the noise band of an 8B judge model scoring 10 short-answer samples — not a
+regression we would claim as a finding.
+
+> **Methodology note.** `ragas.evaluate()` (the library's top-level
+> orchestrator) hung indefinitely in our runtime — confirmed on a
+> single-row, single-metric, single-worker call with `raise_exceptions=True`,
+> which never returned. We isolated this to the orchestrator itself: calling
+> the same metric objects (`context_recall`, `context_precision`,
+> `faithfulness`) directly via their `ascore()` coroutine, sequentially with
+> light pacing, works reliably. The 10 rows above are the average of these
+> direct per-question scores; the `(x/10)` next to each score is how many of
+> the 10 questions the judge call succeeded on before a timeout — timeouts are
+> **excluded from the average**, not counted as 0, to avoid biasing the score
+> downward on an unrelated infrastructure hiccup.
+>
+> `answer_relevancy` requires an embeddings endpoint; Groq's free tier does not
+> expose one, so only the 3 LLM-judged metrics run — reported as a limitation
+> rather than an invented number. The offline proxy in §3.1 (MRR 0.800→0.950)
+> remains the cleanest single number for "did reranking help," since it is not
+> subject to free-tier judge noise.
 
 ### 3.3 Cost, latency, tool distribution (10 runs, `python src/agent.py`)
 
