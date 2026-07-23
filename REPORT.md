@@ -263,11 +263,13 @@ oversight is nominal rather than effective.
 
 The four modules of the course (Labs 1–4) provided the reference implementations
 of TF-IDF/BM25/RRF, the L1 patterns, the L4 matrix, `TokenBudget`, the few-shot
-CoT format and `AgentMonitor`. Our work was to **adapt them to the AMR domain**
-(corpus, adversarial distractors, clinical-intent routing, risk matrix), to
-**write the parts the labs do not cover** (critic agent, MCP client wiring,
-tracer, trace export, evaluation harness) and to **assemble the whole into a
-runnable system**. `src/llm_helpers.py` is the course helper, used unmodified.
+CoT format and `AgentMonitor`. Starting from those references and our problem
+framing, the code (`agent.py`, `guardrails.py`, `mcp_server.py`, `retrieval.py`,
+`reasoning.py`, the critic agent, MCP client wiring, tracer, trace export,
+evaluation harness), the architecture, the AMR corpus and evaluation questions,
+and the report text were AI-generated from our prompts and requirements. Every
+function was run, and tested by the group. `src/llm_helpers.py` is the course
+helper, used unmodified.
 
 | Component | Written by human | AI-assisted | AI-generated |
 |---|---|---|---|
