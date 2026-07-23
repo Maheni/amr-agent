@@ -1,0 +1,31 @@
+# ── Core (offline-first) ──────────────────────────────────────────────
+# The agent runs WITHOUT the optional packages thanks to MockLLMClient,
+# but these are needed for the real MCP transport and the test suite.
+
+# MCP server + stdio client (Lab 1, part 8)
+mcp==1.2.0
+
+# Real LLM client (used as soon as a key is present in .env)
+openai==1.55.3
+
+# MCP server utilities + programmatic tests
+requests==2.32.3
+nest_asyncio==1.6.0
+
+# Tests
+pytest==8.3.4
+
+# Load keys from .env
+python-dotenv==1.0.1
+
+# ── Observability ─────────────────────────────────────────────────────
+# Without these keys/packages the agent uses a local in-memory tracer.
+langfuse==2.53.9
+
+# ── Evaluation (RAGAS: the 4 reference metrics) ───────────────────────
+# Pinned to a known-compatible set (avoids the langchain_community break).
+ragas==0.1.21
+langchain==0.2.16
+langchain-community==0.2.16
+langchain-openai==0.1.25
+datasets==3.2.0
